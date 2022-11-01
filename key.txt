@@ -1,0 +1,2 @@
+CLIENT_TOKEN=MTAzNjY2NDU3NDg1MTY5ODcyMA.G6cPZN.u2BWvCvB27HHXPqTCf8-EX9L5rxbhxt-8GcrfA
+BOT_URL=https://discord.com/api/oauth2/authorize?client_id=1036664574851698720&permissions=259846044736&scope=bot
