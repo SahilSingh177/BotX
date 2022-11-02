@@ -1,6 +1,11 @@
 require("dotenv").config(); //initialize dotenv
-const { Client, GatewayIntentBits } = require('discord.js');
- //import discord.js
+const {
+  Client,
+  GatewayIntentBits,
+  EmbedBuilder,
+  messageLink,
+} = require("discord.js");
+//import discord.js
 const axios = require("axios");
 const client = new Client({
   intents: [
@@ -12,33 +17,37 @@ const client = new Client({
   ],
 }); //create new client
 const prefix = "tony";
-const { DisTube } = require('distube')
-const { SpotifyPlugin } = require('@distube/spotify')
-const { SoundCloudPlugin } = require('@distube/soundcloud')
-const { YtDlpPlugin } = require('@distube/yt-dlp')
+const { DisTube } = require("distube");
+const { SpotifyPlugin } = require("@distube/spotify");
+const { SoundCloudPlugin } = require("@distube/soundcloud");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
 
-client.emotes =  {
-  "play": "▶️",
-  "stop": "⏹️",
-  "queue": "📄",
-  "success": "☑️",
-  "repeat": "🔁",
-  "error": "❌"
-}
+client.emotes = {
+  play: "▶️",
+  stop: "⏹️",
+  queue: "📄",
+  success: "☑️",
+  repeat: "🔁",
+  error: "❌",
+};
 
 client.distube = new DisTube(client, {
-  leaveOnStop: false,
-  emitNewSongOnly: true,
+  leaveOnStop: true,
+  leaveOnEmpty: false,
+  leaveOnFinish: false,
+  emitNewSongOnly: false,
   emitAddSongWhenCreatingQueue: false,
   emitAddListWhenCreatingQueue: false,
+  savePreviousSongs: true,
+  searchSongs: 0,
   plugins: [
     new SpotifyPlugin({
-      emitEventsAfterFetching: true
+      emitEventsAfterFetching: true,
     }),
     new SoundCloudPlugin(),
-    new YtDlpPlugin()
-  ]
-})
+    new YtDlpPlugin(),
+  ],
+});
 
 const user_Command = {
   "Bot trial server": {
@@ -65,9 +74,9 @@ const user_Command = {
 };
 
 const commands = {
-  "ping": ["Bot trial server"],
-  "aww": ["Bot trial server"],
-  "ugh": ["Bot trial server", "hope_'s server"],
+  ping: ["Bot trial server"],
+  aww: ["Bot trial server"],
+  ugh: ["Bot trial server", "hope_'s server"],
   "!meme": ["hope_'s server", "Dark Domain"],
 };
 
@@ -87,7 +96,7 @@ function randomInt(min, max) {
 }
 
 client.on("messageCreate", async (msg) => {
-  if (msg.author.bot || !msg.guild) return
+  if (msg.author.bot || !msg.guild) return;
   if (!msg.content.startsWith(prefix)) {
     return;
   }
@@ -220,21 +229,241 @@ client.on("messageCreate", async (msg) => {
         break;
       }
   }
-  args = msg.content.trim().split(/ +/g)
-  
-  if (args.shift().toLowerCase() === "play") {
-    client.distube.play(msg.member.voice.channel, args.join(" "), {
-      member: msg.member,
-      textChannel: msg.channel,
-      msg
-    })
+  args = msg.content.trim().split(/ +/g);
+  let cmd = args.shift()?.toLowerCase();
+  let queue = client.distube.getQueue(msg);
+
+  if (cmd === "play") {
+    let song = args.join(" ");
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!song) {
+      return msg.reply(`**👀 Please provide a song name or link.**`);
+    } else {
+      client.distube.play(voiceChannel, song, {
+        member: msg.member,
+        textChannel: msg.channel,
+        msg: msg,
+      });
+    }
+  }
+  if (cmd === "playskip") {
+    let song = args.join(" ");
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!song) {
+      return msg.reply(`**👀 Please provide a song name or link.**`);
+    } else {
+      client.distube.play(voiceChannel, song, {
+        member: msg.member,
+        textChannel: msg.channel,
+        msg: msg,
+        skip: true,
+      });
+    }
+  }
+  if (cmd === "playtop") {
+    let song = args.join(" ");
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!song) {
+      return msg.reply(`**👀 Please provide a song name or link.**`);
+    } else {
+      client.distube.play(voiceChannel, song, {
+        member: msg.member,
+        textChannel: msg.channel,
+        msg: msg,
+        skip: true,
+        unshift: true,
+      });
+    }
+  }
+  if (cmd === "skip") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else if (queue.songs.length <= 1) {
+      queue.stop();
+      return msg.reply(`End of the playlist.\n`);
+    } else {
+      queue.skip().then((s) => {
+        msg.reply(`Song Skipped.\n`);
+      });
+    }
+  }
+
+  if (cmd === "stop") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else {
+      queue.stop().then((s) => {
+        msg.reply(`Song stopped`);
+      });
+    }
+  }
+  if (cmd === "autoplay") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else {
+      let autoplay = await queue.toggleAutoplay();
+      msg.reply(`Autoplay: \`${autoplay ? "On" : "Off"}\``);
+    }
+  }
+  if (cmd === "filter") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else {
+      if (args[0] === "off" && queue.filters?.length) queue.setFilter(false);
+      else if (Object.keys(client.distube.filters).includes(args[0])) {
+        if (queue.filters.has(args[0])) queue.filters.remove(args[0]);
+        else queue.filters.add(args[0]);
+      } else if (args[0]) {
+      msg.channel.send(
+        `Current Queue Filter: \`${queue.filters.names.join(", ") || "Off"}\``
+      );}
+    }
+  }
+  if (cmd === "pause") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else if (queue.paused) {
+      return msg.reply(`**Song Already paused.**`);
+    } else {
+      queue.pause();
+      msg.reply(`Song paused.`);
+    }
+  }
+  if (cmd === "resume") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else if (!queue.paused) {
+      return msg.reply(`**Song Already resumed.**`);
+    } else {
+      queue.resume();
+      msg.reply(`Song Resumed.`);
+    }
+  }
+  if (cmd === "volume") {
+    let voiceChannel = msg.member.voice.channel;
+    let volume = Number(args[0]);
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else if (!volume) {
+      return msg.reply(`**Please provide volume.**`);
+    } else {
+      queue.setVolume(volume);
+      msg.reply(`Volume changed to \`${queue.volume}%\` `);
+    }
+  }
+  if (cmd === "queue") {
+    let voiceChannel = msg.member.voice.channel;
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else {
+      let songs = queue.songs
+        .slice(0, 10)
+        .map((song, index) => {
+          return `\`${index + 1}\` [\`${song.name}\`](${song.url})[${
+            song.formattedDuration
+          }]`;
+        })
+        .join("\n");
+
+      msg.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor("BLURPLE")
+            .setTitle(`Queue of ${msg.guild.name}`)
+            .setDescription(songs)
+            .setFooter({
+              text: `Requested by ${msg.author.tag}`,
+              iconURL: msg.author.displayAvatarURL({ dynmic: true }),
+            }),
+        ],
+      });
+    }
+  }
+  if (cmd === "loop") {
+    let voiceChannel = msg.member.voice.channel;
+    let loopmode = args[0];
+    let mods = ["song", "queue", "off"];
+
+    if (!voiceChannel) {
+      return msg.reply(`**👀 Please join a voice channel.**`);
+    } else if (!queue) {
+      return msg.reply(`**Nothing to play.**`);
+    } else if (!mods.includes(loopmode)) {
+      return msg.reply(`**Wrong usage \n ${mods.join(" , ")}**`);
+    } else {
+      if (loopmode === "song") {
+        queue.setRepeatMode(1);
+        msg.reply(`Song set to loop`);
+      } else if (loopmode === "queue") {
+        queue.setRepeatMode(2);
+        msg.reply(`Queue set to loop`);
+      } else if (loopmode === "off") {
+        queue.setRepeatMode(0);
+        msg.reply(`Loop disabled`);
+      }
+    }
   }
 });
 
-client.distube.on("playSong", (queue, song)=> {
-  queue.textChannel.send("NOW PLAYING: "+song.name)
-})
-  
+client.distube.on("playSong", (queue, song) => {
+  queue.textChannel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setColor("BLURPLE")
+        .setTitle(`Now Playing`)
+        .setDescription(`[\`${song.name}\`](${song.url})`),
+    ],
+  });
+});
+client.distube.on("addSong", (queue, song) => {
+  queue.textChannel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setColor("BLURPLE")
+        .setTitle(`👍 Song Added in Queue`)
+        .setDescription(`[\`${song.name}\`](${song.url})`),
+    ],
+  });
+});
+client.distube.on("disconnect", (queue, song) => {
+  queue.textChannel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setColor("BLURPLE")
+        .setDescription(
+          `Disconnected from ${queue.voice.channel.name} Voice Channel`
+        ),
+    ],
+  });
+});
 
 function getRandomPost(posts) {
   const randomIndex = randomInt(0, posts.length);
