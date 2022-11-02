@@ -1,25 +1,4 @@
-const user_Command = {
-  "Bot trial Server": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-  "Dark Domain": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-  "hope_'s server": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-};
 
-console.log( user_Command["Dark Domain"])
+fetch("http://api.weatherapi.com/v1/current.json?key=d1dabbfeb7ee44de865195900220211&q=London")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
