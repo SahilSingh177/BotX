@@ -16,7 +16,7 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
   ],
 }); //create new client
-const prefix = "nikhil";
+const prefix = "sahil";
 const { DisTube } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
