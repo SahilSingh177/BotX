@@ -16,7 +16,7 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
   ],
 }); //create new client
-const prefix = "tony";
+const prefix = "nikhil";
 const { DisTube } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
@@ -91,6 +91,8 @@ const subReddits = [
   "r/softwaregore",
   "r/badUIbattles",
 ];
+
+const flirtyText=["Thinking a lot of things about you I can't say…but I could text.","You're my favorite veggie—a cute-cumber!","Can't stop thinking about your lips.","Feeling cuddly? ...",`When can I see you again? Pick a day that ends in y`,`Do you believe in love at first text? Because you can delete this one, and I can keep texting until you do.`]
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -208,7 +210,7 @@ client.on("messageCreate", async (msg) => {
       break;
     //our meme command below
 
-    case "!meme":
+    case "meme":
       if (commands["!meme"].includes(msg.guild.name)) {
         msg.channel.send("Here's your meme!"); //Replies to user command
 
@@ -228,6 +230,11 @@ client.on("messageCreate", async (msg) => {
         msg.reply("Naah Hard paas!");
         break;
       }
+    case "flirt":
+        const randomIndex = randomInt(0, flirtyText.length);
+        msg.channel.send(flirtyText[randomIndex]);
+        break;
+      
   }
   args = msg.content.trim().split(/ +/g);
   let cmd = args.shift()?.toLowerCase();
