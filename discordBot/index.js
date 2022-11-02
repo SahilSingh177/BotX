@@ -1,9 +1,44 @@
 require("dotenv").config(); //initialize dotenv
-const Discord = require("discord.js"); //import discord.js
+const { Client, GatewayIntentBits } = require('discord.js');
+ //import discord.js
 const axios = require("axios");
-const client = new Discord.Client(); //create new client
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMembers,
+  ],
+}); //create new client
 const prefix = "tony";
+const { DisTube } = require('distube')
+const { SpotifyPlugin } = require('@distube/spotify')
+const { SoundCloudPlugin } = require('@distube/soundcloud')
+const { YtDlpPlugin } = require('@distube/yt-dlp')
 
+client.emotes =  {
+  "play": "▶️",
+  "stop": "⏹️",
+  "queue": "📄",
+  "success": "☑️",
+  "repeat": "🔁",
+  "error": "❌"
+}
+
+client.distube = new DisTube(client, {
+  leaveOnStop: false,
+  emitNewSongOnly: true,
+  emitAddSongWhenCreatingQueue: false,
+  emitAddListWhenCreatingQueue: false,
+  plugins: [
+    new SpotifyPlugin({
+      emitEventsAfterFetching: true
+    }),
+    new SoundCloudPlugin(),
+    new YtDlpPlugin()
+  ]
+})
 
 const user_Command = {
   "Bot trial server": {
@@ -30,9 +65,9 @@ const user_Command = {
 };
 
 const commands = {
-  ping: ["Bot trial server"],
-  aww: ["Bot trial server"],
-  ugh: ["Bot trial server", "hope_'s server"],
+  "ping": ["Bot trial server"],
+  "aww": ["Bot trial server"],
+  "ugh": ["Bot trial server", "hope_'s server"],
   "!meme": ["hope_'s server", "Dark Domain"],
 };
 
@@ -51,14 +86,14 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-client.on("message", async (msg) => {
+client.on("messageCreate", async (msg) => {
+  if (msg.author.bot || !msg.guild) return
   if (!msg.content.startsWith(prefix)) {
     return;
   }
   msg.content = msg.content.split(" ").slice(1).join(" ");
   let command = msg.content.split(" ")[0];
   let args = msg.content.replace(command, "").trim();
-  console.log(args, command);
 
   if (
     "kick user" in user_Command[msg.guild.name] &&
@@ -185,7 +220,21 @@ client.on("message", async (msg) => {
         break;
       }
   }
+  args = msg.content.trim().split(/ +/g)
+  
+  if (args.shift().toLowerCase() === "play") {
+    client.distube.play(msg.member.voice.channel, args.join(" "), {
+      member: msg.member,
+      textChannel: msg.channel,
+      msg
+    })
+  }
 });
+
+client.distube.on("playSong", (queue, song)=> {
+  queue.textChannel.send("NOW PLAYING: "+song.name)
+})
+  
 
 function getRandomPost(posts) {
   const randomIndex = randomInt(0, posts.length);
