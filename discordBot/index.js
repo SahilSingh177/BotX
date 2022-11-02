@@ -2,14 +2,36 @@ require("dotenv").config(); //initialize dotenv
 const Discord = require("discord.js"); //import discord.js
 const axios = require("axios");
 const client = new Discord.Client(); //create new client
-const { poll } = require("discord.js-poll"); //for poll using bot
-const ytdl = require('ytdl-core'); //For music
-const queue = new Map();
+const prefix = "tony";
 
+
+const user_Command = {
+  "Bot trial server": {
+    "play songs": "bajao",
+    "ping yourself": "ping",
+    "kick user": "nikalo",
+    "ban user": "ban",
+    "unban user": "unban",
+  },
+  "Dark Domain": {
+    "play songs": "bajao",
+    "ping yourself": "ping",
+    "kick user": "nikalo",
+    "ban user": "ban",
+    "unban user": "unban",
+  },
+  "hope_'s server": {
+    "play songs": "bajao",
+    "ping yourself": "ping",
+    "kick user": "nikalo",
+    "ban user": "ban",
+    "unban user": "unban",
+  },
+};
 
 const commands = {
   ping: ["Bot trial server"],
-  "aww": ["Bot trial server"],
+  aww: ["Bot trial server"],
   ugh: ["Bot trial server", "hope_'s server"],
   "!meme": ["hope_'s server", "Dark Domain"],
 };
@@ -30,34 +52,42 @@ function randomInt(min, max) {
 }
 
 client.on("message", async (msg) => {
-  let command = msg.content.split(" ")[0].slice(1);
-  let args = msg.content.replace("!" + command, "").trim();
-  switch (command) {
-    case "kick": {
-      let userID = args.includes("<@!")
-        ? args.replace("<@!", "").replace(">", "")
-        : args.includes("<@")
-        ? args.replace("<@", "").replace("<", "")
-        : "";
-      userID = userID.replace(">", "");
-      if (userID == "") {
-        msg.reply("Invalid user ID or mention.");
-        return;
-      }
+  if (!msg.content.startsWith(prefix)) {
+    return;
+  }
+  msg.content = msg.content.split(" ").slice(1).join(" ");
+  let command = msg.content.split(" ")[0];
+  let args = msg.content.replace(command, "").trim();
+  console.log(args, command);
 
-      msg.guild.members.fetch(userID).then((member) => {
-        member
-          .kick("Kicked by " + msg.author.tag)
-          .then((m) => {
-            msg.channel.send("👢 Kicked <@" + userID + ">.");
-          })
-          .catch(() => {
-            console.error;
-            msg.reply("Could not kick the specified member.");
-          });
-      });
-      break;
+  if (
+    "kick user" in user_Command[msg.guild.name] &&
+    command === user_Command[msg.guild.name]["kick user"]
+  ) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
     }
+
+    msg.guild.members.fetch(userID).then((member) => {
+      member
+        .kick("Kicked by " + msg.author.tag)
+        .then((m) => {
+          msg.channel.send("👢 Kicked <@" + userID + ">.");
+        })
+        .catch(() => {
+          console.error;
+          msg.reply("Could not kick the specified member.");
+        });
+    });
+  }
+  switch (command) {
     case "ban": {
       let userID = args.includes("<@!")
         ? args.replace("<@!", "").replace(">", "")
