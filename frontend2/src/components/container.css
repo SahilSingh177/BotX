@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inconsolata&display=swap');
+.main{
+    height: 50vh;
+    width: 90vw;
+    background-color: rgb(60, 74, 233);
+    margin: auto;
+    margin-top: 6em;
+    color: white;
+    font-size: 1.5rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.inputfield{
+    display: flex;
+    flex-direction: row;
+    /* border: 1px solid black; */
+    justify-content: space-evenly;
+}
+
+button{
+    margin-left: 50%;
+    background-color: rgb(32, 26, 26);
+    color: white;
+    /* padding: 2rem; */
+    height: 4rem;
+    width: 8rem;
+    font-size: 2rem;
+    border-radius: 1.5rem;
+    border: none;
+    cursor: pointer;
+}
+p{
+    margin-left: 1rem;
+}
+input{
+    background-color: rgb(32,34,37);
+    color: white;
+    border: 1px solid grey;
+    width: 55%;
+    font-family: 'Anton', sans-serif;
+    font-family: 'Inconsolata', monospace;
+    font-size: large;
+}
+.desc{
+    height: 10em;
+    margin-right: 2em;
+}
+button:hover{
+    background-color: rgba(55, 45, 45, 0.91);
+}
