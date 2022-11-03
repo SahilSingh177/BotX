@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 
 import "./container.css";
 import styles from './button.module.css';
@@ -76,8 +76,7 @@ export const Container = () =>{
 
 
     const response = await fetch(endpoint, {
-      method: 'POST',
-      mode: 'no-cors', 
+      method: "post",
       headers: {
         'Content-Type': 'application/json',
         // "x-access-token": "token-value",
