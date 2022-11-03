@@ -83,14 +83,15 @@ export const Container = () =>{
       },
       body: JSON.stringify(data) 
     });
+
   
     console.log("success")
 
     const getAllServers= await fetch("http://localhost:5000/get-bot",{
       method:"get"
     })
-
-    console.log(getAllServers)
+    const resp=await getAllServers.json();
+    console.log(resp)
   }
   return (
     <>
