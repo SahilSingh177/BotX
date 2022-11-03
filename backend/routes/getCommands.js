@@ -33,7 +33,7 @@ router.post('/save-bot',async (req,res,next)=>{
 
 router.get('/get-bot',async (req,res,next)=>{
     const resu=await bot.find({});
-    const response=resu[0];
+    const response=resu;
     console.log(response)
     res.send(JSON.stringify(response))
 })
