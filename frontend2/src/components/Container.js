@@ -85,6 +85,12 @@ export const Container = () =>{
     });
   
     console.log("success")
+
+    const getAllServers= await fetch("http://localhost:5000/get-bot",{
+      method:"get"
+    })
+
+    console.log(getAllServers)
   }
   return (
     <>

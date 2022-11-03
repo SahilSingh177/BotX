@@ -21,7 +21,6 @@ router.post('/save-bot',async (req,res,next)=>{
     }
     else{
         const previousBots=newBot.bots;
-        console.log(previousBots)
         previousBots.push({bot_name:serverName,command:commands,desc:descript});
         newBot.bots=previousBots;
         newBot.save()
@@ -33,7 +32,10 @@ router.post('/save-bot',async (req,res,next)=>{
 })
 
 router.get('/get-bot',async (req,res,next)=>{
-    res.send(bot.find())
+    const resu=await bot.find({});
+    const response=resu[0];
+    console.log(response)
+    res.send(JSON.stringify(response))
 })
 
 module.exports=router;
