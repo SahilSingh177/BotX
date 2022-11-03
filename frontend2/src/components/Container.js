@@ -1,8 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
-import Lottie from "lottie-react";
-import animatedBot from '../assets/animated-bot.json'
+import axios from "axios";
 
 import "./container.css";
 import styles from './button.module.css';
@@ -15,8 +13,6 @@ export const Container = () =>{
   const [flirt,setFlirt]=useState(false);
   const [meme,setMeme]=useState(false);
 
-  // const music=
-
   const ban=[
     {category:"ban"},
     {category:"unban"}
@@ -28,13 +24,7 @@ export const Container = () =>{
     {category:"playtop"},
   ];
 
-
   const [musicCategories, setMusicCategories] = useState(music);
-
-  useEffect(() => {
-    console.log(musicCategories)
-  }, [])
-  
   const [banCategories,setBanCategories]=useState(ban);
 
   const changeMusicState=()=>{
@@ -53,31 +43,63 @@ export const Container = () =>{
     setMeme(!meme);
   }
 
+
   const closeInput=(index)=>{
     console.log("index")
-    // const dupCat=[...musicCategories];
-    // dupCat.splice(index);
     console.log(index);
-    // setMusicCategories(dupCat);
   }
 
+  const saveFormData=async(e)=>{
+    e.preventDefault()
+    // const data;
+    const data={
+      bot_name:"",
+      server_name:"",
+      command:[],
+      desc:[]
+    };
+    console.log("getting form data........")
+    const form = document.getElementById('my_form');
+    const formData = new FormData(form);
+    
+
+    for (const [key, value] of formData) {
+      if(key=="bot_name")data[key]=value
+      if(key=="server_name")data[key]=value;
+      if(key=="command")data[key].push(value);
+      if(key=="desc")data[key].push(value);
+    }
+
+    console.log(data)
+
+    const endpoint="http://localhost:5000/save-bot";
+
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      mode: 'no-cors', 
+      headers: {
+        'Content-Type': 'application/json',
+        // "x-access-token": "token-value",
+      },
+      body: JSON.stringify(data) 
+    });
+  
+    console.log("success")
+  }
   return (
     <>
-    <h1 className="heading">
+    <h1>
       create-a-bot
     </h1>
-    <form action="http://localhost:3000/get-commands" method="post">
+    <form action="#" id="my_form" >
     <div className="welcome">
       <div className="wlI">
-    <input type="input" class="form__field" placeholder="Bot Name" name="bot-name" id='name' required />
-    <input type="input" class="form__field" placeholder="Server Name" name="server-name" required />
+    <input type="input" class="form__field" placeholder="Bot Name" name="bot_name" id='name' required />
+    <input type="input" class="form__field" placeholder="Server Name" name="server_name" required />
     </div>
     <div className="create-a-bot">  
 
-    {/* <div class="form_g">
-      <input type="input" class="form__field" placeholder="Bot Name" name="name" required />
-      <input type="input" class="form__field" placeholder="Sever Name" name="name" id='name' required />
-    </div> */}
 
       <img src="https://i.pinimg.com/originals/f6/d7/ef/f6d7ef4b5b015be7cf607e2087c0a244.png" alt="" />
      </div>
@@ -93,34 +115,34 @@ export const Container = () =>{
       {
         showMusic && musicCategories.map((singleCategory,index)=>{
           return <div key={index} className="categories">
-            <input type="text" name="command" value={singleCategory.category}/>
+            <input type="text" name="command" value={singleCategory.category} readonly/>
 
             <div class={inputStyles.webflow}>
               <input class="" type="text" name="desc" placeholder="Enter the command"></input>
               
             </div>
-            <button className="cls close black pointy" onClick={closeInput(index)}></button>
+            {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
           </div>
         })
-      }
+      },
       {
         showBan && banCategories.map((singleCategory,index)=>{
           return <div key={index} className="categories">
-          <input type="text" name="command" value={singleCategory.category}/>
+          <input type="text" name="command" value={singleCategory.category} readonly/>
 
           <div class={inputStyles.webflow}>
             <input class="" type="text" name="desc" placeholder="Enter the command"></input>
             
           </div>
-          <button className="cls close black pointy" onClick={closeInput(index)}></button>
+          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
         </div>
         })
       }
-      <button class={styles.an2} type="submit" href="#">
-        {/* <span></span>
+      <button class={styles.an2} onClick={saveFormData} href="#">
         <span></span>
         <span></span>
-        <span></span> */}
+        <span></span>
+        <span></span>
         SUBMIT
         
     </button>
