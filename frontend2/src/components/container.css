@@ -26,8 +26,8 @@ button{
     background-color: rgb(32, 26, 26);
     color: white;
     /* padding: 2rem; */
-    height: 4rem;
-    width: 8rem;
+    height: 7rem;
+    width: 16rem;
     font-size: 2rem;
     border-radius: 1.5rem;
     border: none;
@@ -49,9 +49,9 @@ input{
     height: 10em;
     margin-right: 2em;
 }
-button:hover{
+/* button:hover{
     background-color: rgba(55, 45, 45, 0.91);
-}
+} */
 
 .categories{
     margin: auto;
@@ -222,7 +222,7 @@ button:hover{
     align-items: center;
   }
 
-  h1{
+  .heading{
     font-size: 6rem;
     padding: 10vh auto;
     text-align: center;
