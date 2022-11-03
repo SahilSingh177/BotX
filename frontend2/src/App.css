@@ -240,6 +240,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   background-size: cover;
   background-repeat: no-repeat;
   height: 100vh;
+  width: 100vw;
 }
 .banner .tagline {
   font-weight: 700;

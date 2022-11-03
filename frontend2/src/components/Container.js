@@ -63,7 +63,7 @@ export const Container = () =>{
 
   return (
     <>
-    <h1>
+    <h1 className="heading">
       create-a-bot
     </h1>
     <form action="http://localhost:3000/get-commands" method="post">
@@ -102,7 +102,7 @@ export const Container = () =>{
             <button className="cls close black pointy" onClick={closeInput(index)}></button>
           </div>
         })
-      },
+      }
       {
         showBan && banCategories.map((singleCategory,index)=>{
           return <div key={index} className="categories">
@@ -117,10 +117,10 @@ export const Container = () =>{
         })
       }
       <button class={styles.an2} type="submit" href="#">
+        {/* <span></span>
         <span></span>
         <span></span>
-        <span></span>
-        <span></span>
+        <span></span> */}
         SUBMIT
         
     </button>
