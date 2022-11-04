@@ -58,7 +58,7 @@ export const Banner = () => {
                   <h4>Your own inherent Discord Bot.</h4>
                   <br></br>
                   <i><q>Customisable means that anyone can set any command according to their choice ❤️. I also have lots of commands option.</q></i><br></br>
-                  <Link to="/botForm">Wanna Build a Bot?</Link>
+                  <Link to="/botForm" className='buildABot'>Wanna Build a Bot?</Link>
               </div>}
             </TrackVisibility>
           </Col>
