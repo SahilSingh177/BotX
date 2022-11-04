@@ -216,7 +216,7 @@ client.on("messageCreate", async (msg) => {
   let cmd = args.shift()?.toLowerCase();
   let queue = client.distube.getQueue(msg);
   
-  if ((descr.includes("play")) && (cmd === comm[descr.indexOf("play")])) {
+  if ((descr.includes("play a song")) && (cmd === comm[descr.indexOf("play a song")])) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
