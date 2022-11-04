@@ -6,7 +6,10 @@ This is a website that allows user to create their own discord bot with customis
 
 ### Preview
 
-Demo Video Link - https://www.loom.com/share/c83e5e05a21449e2b1aeb3dbc00f925d
+### Demo Video
+
+https://user-images.githubusercontent.com/96344003/199906544-e2b2d50b-2710-4214-a999-b450630a520f.mov
+
 
 ![Screenshot (236)](https://user-images.githubusercontent.com/96344003/199884310-9a53b570-6a9d-4994-9e6b-15bf390aa1b9.png)
 
