@@ -16,22 +16,46 @@ export const Container = () =>{
 
   const [showMusic, setShowMusic] = useState(false);
   const [showBan, setShowBan]=useState(false);
-  const [flirt,setFlirt]=useState(false);
-  const [meme,setMeme]=useState(false);
+  const [showflirt,setShowFlirt]=useState(false);
+  const [showmeme,setShowMeme]=useState(false);
 
   const ban=[
     {category:"ban"},
-    {category:"unban"}
+    {category:"unban"},
+    {category:"kick user"}
   ]
+
 
   const music=[
     {category:"play"},
     {category:"playskip"},
     {category:"playtop"},
+    {category:"skip"},
+    {category:"stop"},
+    {category:"autoplay"},
+    {category:"filter"},
+    {category:"pause"},
+    {category:"resume"},
+    {category:"volume"},
+    {category:"queue"},
+    {category:"playSong"},
+    {category:"addSong"},
+    {category:"disconnect"}
+  ];
+
+  const meme=[
+    {category:"meme"}
+  ];
+
+  const flirt=[
+    {category:"flirt"}
   ];
 
   const [musicCategories, setMusicCategories] = useState(music);
   const [banCategories,setBanCategories]=useState(ban);
+  const [memeCategories, setMemeCategories] = useState(meme);
+  const [flirtCategories, setFlirtCategories] = useState(flirt);
+
   const [loading,setLoading]=useState(false);
   const [results,showResults] = useState(false);
 
@@ -47,12 +71,14 @@ export const Container = () =>{
     setShowBan(!showBan);
   }
 
-  const flirtOrNot=()=>{
-    setFlirt(!flirt);
+  const flirtOrNot=(e)=>{
+    e.preventDefault()
+    setShowFlirt(!showflirt)
   }
 
-  const showMeme=()=>{
-    setMeme(!meme);
+  const showMeme=(e)=>{
+    e.preventDefault()
+    setShowMeme(!showmeme)
   }
 
   const viewResult=async ()=>{
@@ -133,8 +159,8 @@ export const Container = () =>{
      <div class={styles.container}>
         <div class={styles.btn} onClick={changeMusicState}><a href="#">MUSIC</a></div>  
         <div class={styles.btn} onClick={changeBanCategories}><a href="#">BAN</a></div>  
-        <div class={styles.btn}><a href="#">FLIRT</a></div>  
-        <div class={styles.btn}><a href="#">MEME</a></div>  
+        <div class={styles.btn} onClick={flirtOrNot}><a href="#">FLIRT</a></div>  
+        <div class={styles.btn} onClick={showMeme}><a href="#">MEME</a></div>  
     </div>
 
       {
@@ -151,6 +177,32 @@ export const Container = () =>{
         })
       },
       {
+        showmeme && memeCategories.map((singleCategory,index)=>{
+          return <div key={index} className="categories">
+          <input type="text" name="command" value={singleCategory.category} readonly/>
+
+          <div class={inputStyles.webflow}>
+            <input class="" type="text" name="desc" placeholder="Enter the command"></input>
+            
+          </div>
+          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
+        </div>
+        })
+      },
+      {
+        showflirt && flirtCategories.map((singleCategory,index)=>{
+          return <div key={index} className="categories">
+          <input type="text" name="command" value={singleCategory.category} readonly/>
+
+          <div class={inputStyles.webflow}>
+            <input class="" type="text" name="desc" placeholder="Enter the command"></input>
+            
+          </div>
+          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
+        </div>
+        })
+      },
+      {
         showBan && banCategories.map((singleCategory,index)=>{
           return <div key={index} className="categories">
           <input type="text" name="command" value={singleCategory.category} readonly/>
@@ -162,7 +214,7 @@ export const Container = () =>{
           {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
         </div>
         })
-      }
+      },
       <button class={styles.an2} onClick={saveFormData} href="#">
         <span></span>
         <span></span>
