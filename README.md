@@ -1,7 +1,13 @@
 # BotX - Build Your Own Discord Bot
+![Screenshot (235)](https://user-images.githubusercontent.com/96344003/199884275-6227406a-6908-4111-9f00-2e6a684c83a4.png)
 
 # About
 This is a website that allows user to create their own discord bot with customised commands and features. It's built using DiscordJS, NodeJS, and ReactJS.
+
+### Preview
+![Screenshot (236)](https://user-images.githubusercontent.com/96344003/199884310-9a53b570-6a9d-4994-9e6b-15bf390aa1b9.png)
+![Screenshot (237)](https://user-images.githubusercontent.com/96344003/199884323-a26939f7-cde1-4d23-bd7f-024eeff29757.png)
+![Screenshot (238)](https://user-images.githubusercontent.com/96344003/199884329-3580a808-5589-4c67-9534-0beb95dc588b.png)
 
 ### Features:-
 - Custom Commands
