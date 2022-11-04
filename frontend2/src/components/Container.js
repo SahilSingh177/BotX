@@ -1,12 +1,20 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 // import axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import "./container.css";
 import styles from './button.module.css';
 import inputStyles from './input.module.css';
 
 export const Container = () =>{
+  const navigate = useNavigate();
+
+  const goToHome=()=>{
+    navigate(-1)
+  }
 
   const [showMusic, setShowMusic] = useState(false);
   const [showBan, setShowBan]=useState(false);
@@ -26,12 +34,17 @@ export const Container = () =>{
 
   const [musicCategories, setMusicCategories] = useState(music);
   const [banCategories,setBanCategories]=useState(ban);
+  const [loading,setLoading]=useState(false);
+  const [results,showResults] = useState(false);
 
-  const changeMusicState=()=>{
+
+  const changeMusicState=(e)=>{
+    e.preventDefault()
     setShowMusic(!showMusic);
   }
 
-  const changeBanCategories=()=>{
+  const changeBanCategories=(e)=>{
+    e.preventDefault()
     setShowBan(!showBan);
   }
 
@@ -43,11 +56,13 @@ export const Container = () =>{
     setMeme(!meme);
   }
 
-
-  const closeInput=(index)=>{
-    console.log("index")
-    console.log(index);
+  const viewResult=async ()=>{
+      showResults(false);
+      setLoading(true);
+      setTimeout(()=>setLoading(false),1500);
+      showResults(true);
   }
+ 
 
   const saveFormData=async(e)=>{
     e.preventDefault()
@@ -91,11 +106,16 @@ export const Container = () =>{
       method:"get"
     })
     const resp=await getAllServers.json();
-    console.log(resp)
+    
+    viewResult();
   }
+
   return (
     <>
-    <h1>
+    {/* <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> */}
+
+    <i class='fas fa-chevron-left back' style={{fontSize:"48px",color:"white",fontWeight:"bolder",background:"transparent"}} onClick={goToHome}></i>
+    <h1 className="heading">
       create-a-bot
     </h1>
     <form action="#" id="my_form" >
@@ -153,6 +173,14 @@ export const Container = () =>{
         
     </button>
     </form>
+    {
+      loading && <Spinner/>
+    }
+    {
+      results && <div>
+        <a href="https://discord.com/api/oauth2/authorize?client_id=1036664574851698720&permissions=4398046511095&scope=bot" className="finalLink">Add Bot</a>
+      </div>
+    }
     </>
   );
 }
