@@ -70,6 +70,8 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+
+
 const subReddits = [
   "r/programmerreactions",
   "r/ProgrammerHumor",
@@ -92,6 +94,9 @@ function randomInt(min, max) {
 
 client.on("messageCreate", async (msg) => {
   console.log(msg.content);
+
+  await getData();
+  
   let prefix = [];
   while(!data[servers[msg.guild.name]].bots){}
   for (let i = 0; i < data[servers[msg.guild.name]].bots.length; i++) {
