@@ -26,5 +26,5 @@
     "node-fetch": "^3.2.10",
     "ytdl-core": "^4.11.2"
   },
-    "type": "module"
+  "type": "module"
 }

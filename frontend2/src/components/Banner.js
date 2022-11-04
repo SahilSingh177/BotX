@@ -55,10 +55,10 @@ export const Banner = () => {
               {({ isVisible }) =>
               <div className={isVisible ? "animate__animated animate__fadeIn" : ""}>
                 <h1>{`Hi! I'm BotX ⚡`} </h1>
-                  <h4>Your own inherent Discord Bot.</h4>
+                  <h4>Your own Discord Bot.</h4>
                   <br></br>
-                  <i><q>Customisable means that anyone can set any command according to their choice ❤️. I also have lots of commands option.</q></i><br></br>
-                  <Link to="/botForm" className='buildABot'>Wanna Build a Bot?</Link>
+                  <i><q>Fully Customisable - anyone can set any command according to their choice ❤️. </q></i><br></br>
+                  <Link to="/botForm" className='buildABot'>Build Your Own BotX</Link>
               </div>}
             </TrackVisibility>
           </Col>

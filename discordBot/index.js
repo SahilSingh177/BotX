@@ -107,116 +107,14 @@ client.on("messageCreate", async (msg) => {
   msg.content = msg.content.split(" ").slice(1).join(" ");
   let command_user = msg.content.split(" ")[0];
   let args = msg.content.replace(command_user, "").trim();
-  
-  if (
-    "kick user" in descr &&
-    command_user === comm[descr.indexOf("kick user")]
-  ) {
-    let userID = args.includes("<@!")
-      ? args.replace("<@!", "").replace(">", "")
-      : args.includes("<@")
-      ? args.replace("<@", "").replace("<", "")
-      : "";
-    userID = userID.replace(">", "");
-    if (userID == "") {
-      msg.reply("Invalid user ID or mention.");
-      return;
-    }
-
-    msg.guild.members.fetch(userID).then((member) => {
-      member
-        .kick("Kicked by " + msg.author.tag)
-        .then((m) => {
-          msg.channel.send("👢 Kicked <@" + userID + ">.");
-        })
-        .catch(() => {
-          console.error;
-          msg.reply("Could not kick the specified member.");
-        });
-    });
-  }
-  if ("ban user" in descr && command_user === comm[descr.indexOf("ban user")]) {
-    let userID = args.includes("<@!")
-      ? args.replace("<@!", "").replace(">", "")
-      : args.includes("<@")
-      ? args.replace("<@", "").replace("<", "")
-      : "";
-    userID = userID.replace(">", "");
-    if (userID == "") {
-      msg.reply("Invalid user ID or mention.");
-      return;
-    }
-
-    msg.guild.members.fetch(userID).then((member) => {
-      member
-        .ban({ days: 7, reason: "They deserved it" })
-        .then(() => {
-          msg.channel.send("🔨 Banned <@" + userID + ">.");
-        })
-        .catch(() => {
-          console.error;
-          msg.reply("Could not ban the specified member.");
-        });
-    });
-  }
-
-  if (
-    "unban user" in descr &&
-    command_user === comm[descr.indexOf("unban user")]
-  ) {
-    let userID = args.includes("<@!")
-      ? args.replace("<@!", "").replace(">", "")
-      : args.includes("<@")
-      ? args.replace("<@", "").replace("<", "")
-      : "";
-    userID = userID.replace(">", "");
-    if (userID == "") {
-      msg.reply("Invalid user ID or mention.");
-      return;
-    }
-
-    msg.guild
-      .fetchBans()
-      .then((bans) => {
-        let member = bans.get(userID);
-        if (member == null) {
-          msg.reply("Cannot find a ban for the given user.");
-          return;
-        }
-
-        msg.guild.members
-          .unban(userID)
-          .then(() => {
-            msg.channel.send("Unbanned <@" + userID + ">.");
-          })
-          .catch(console.error);
-      })
-      .catch(() => console.error);
-  }
-  if ("meme" in descr && command_user === comm[descr.indexOf("meme")]) {
-    msg.channel.send("Here's your meme!"); //Replies to user command
-
-    const randomIndex = randomInt(0, subReddits.length);
-    axios
-      .get(`https://reddit.com/${subReddits[randomIndex]}/.json`)
-      .then((resp) => {
-        const {
-          title,
-          url,
-          subreddit_name_prefixed: subreddit,
-        } = getRandomPost(resp.data.data.children);
-        msg.channel.send(`${title}\n${url}\n from ${subreddit}`);
-      });
-  }
-  if ("flirt" in descr && command_user === comm[descr.indexOf("flirt")]) {
-    const randomIndex = randomInt(0, flirtyText.length);
-    msg.channel.send(flirtyText[randomIndex]);
-  }
   args = msg.content.trim().split(/ +/g);
   let cmd = args.shift()?.toLowerCase();
   let queue = client.distube.getQueue(msg);
-  
-  if ((descr.includes("play a song")) && (cmd === comm[descr.indexOf("play a song")])) {
+
+  if (
+    descr.includes("play a song") &&
+    cmd === comm[descr.indexOf("play a song")]
+  ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -232,8 +130,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "playskip a song" in descr &&
-    command_user === cmd[descr.indexOf("playskip a song")]
+    descr.includes("playskip a song") &&
+    cmd === comm[descr.indexOf("playskip a song")]
   ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
@@ -251,8 +149,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "playtop a song" in descr &&
-    command_user === cmd[descr.indexOf("playtop a song")]
+    descr.includes("playtop a song") &&
+    cmd === comm[descr.indexOf("playtop a song")]
   ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
@@ -270,10 +168,7 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (
-    "skip song" in descr &&
-    command_user === cmd[descr.indexOf("skip song")]
-  ) {
+  if (descr.includes("skip song") && cmd === comm[descr.indexOf("skip song")]) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -290,8 +185,8 @@ client.on("messageCreate", async (msg) => {
   }
 
   if (
-    "stop playing song" in descr &&
-    command_user === cmd[descr.indexOf("stop playing song")]
+    descr.includes("stop playing song") &&
+    cmd === comm[descr.indexOf("stop playing song")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -305,8 +200,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "autoplay songs" in descr &&
-    command_user === cmd[descr.indexOf("autoplay songs")]
+    descr.includes("autoplay songs") &&
+    cmd === comm[descr.indexOf("autoplay songs")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -319,15 +214,15 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "use filter for song" in descr &&
-    command_user === cmd[descr.indexOf("use filter for song")]
+    descr.includes("use filter for song") &&
+    cmd === comm[descr.indexOf("use filter for song")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
     } else if (!queue) {
       return msg.reply(`**Nothing to play.**`);
-    } else {
+    } else{
       if (args[0] === "off" && queue.filters?.length) queue.setFilter(false);
       else if (Object.keys(client.distube.filters).includes(args[0])) {
         if (queue.filters.has(args[0])) queue.filters.remove(args[0]);
@@ -340,8 +235,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "pause song" in descr &&
-    command_user === cmd[descr.indexOf("pause song")]
+    descr.includes("pause song") &&
+    cmd === comm[descr.indexOf("pause song")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -356,8 +251,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "resume song" in descr &&
-    command_user === cmd[descr.indexOf("resume song")]
+    descr.includes("resume song") &&
+    cmd === comm[descr.indexOf("resume song")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -372,8 +267,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "set volume" in descr &&
-    command_user === cmd[descr.indexOf("set volume")]
+    descr.includes("set volume") &&
+    cmd === comm[descr.indexOf("set volume")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     let volume = Number(args[0]);
@@ -389,8 +284,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "show playlist" in descr &&
-    command_user === cmd[descr.indexOf("show playlist")]
+    descr.includes("show playlist") &&
+    cmd === comm[descr.indexOf("show playlist")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -422,8 +317,8 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    "loop a song or a playlist" in descr &&
-    command_user === cmd[descr.indexOf("loop a song or a playlist")]
+    descr.includes("loop a song or a playlist") &&
+    cmd === comm[descr.indexOf("loop a song or a playlist")]
   ) {
     let voiceChannel = msg.member.voice.channel;
     let loopmode = args[0];
@@ -447,6 +342,103 @@ client.on("messageCreate", async (msg) => {
         msg.reply(`Loop disabled`);
       }
     }
+  }
+  args=args[0]
+  if ((descr.includes("kick user")) && (cmd === comm[descr.indexOf("kick user")])) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
+    }
+
+    msg.guild.members.fetch(userID).then((member) => {
+      member
+        .kick("Kicked by " + msg.author.tag)
+        .then((m) => {
+          msg.channel.send("👢 Kicked <@" + userID + ">.");
+        })
+        .catch(() => {
+          console.error;
+          msg.reply("Could not kick the specified member.");
+        });
+    });
+  }
+  
+  if ((descr.includes("ban user")) && (cmd === comm[descr.indexOf("ban user")])) {
+    let userID = args.includes("<@!")? args.replace("<@!", "").replace(">", ""): args.includes("<@")? args.replace("<@", "").replace("<", ""): "";
+    console.log(userID);
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
+    }
+
+    msg.guild.members.fetch(userID).then((member) => {
+      member
+        .ban({ days: 7, reason: "They deserved it" })
+        .then(() => {
+          msg.channel.send("🔨 Banned <@" + userID + ">.");
+        })
+        .catch(() => {
+          console.error;
+          msg.reply("Could not ban the specified member.");
+        });
+    });
+  }
+
+  if ((descr.includes("unban user")) && (cmd === comm[descr.indexOf("unban user")])) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
+    }
+
+    msg.guild
+      .bans.fetch ()
+      .then((bans) => {
+        let member = bans.get(userID);
+        if (member == null) {
+          msg.reply("Cannot find a ban for the given user.");
+          return;
+        }
+
+        msg.guild.members
+          .unban(userID)
+          .then(() => {
+            msg.channel.send("Unbanned <@" + userID + ">.");
+          })
+          .catch(console.error);
+      })
+      .catch(() => console.error);
+  }
+  if ((descr.includes("meme")) && (cmd === comm[descr.indexOf("meme")])) {
+    msg.channel.send("Here's your meme!"); //Replies to user command
+
+    const randomIndex = randomInt(0, subReddits.length);
+    axios
+      .get(`https://reddit.com/${subReddits[randomIndex]}/.json`)
+      .then((resp) => {
+        const {
+          title,
+          url,
+          subreddit_name_prefixed: subreddit,
+        } = getRandomPost(resp.data.data.children);
+        msg.channel.send(`${title}\n${url}\n from ${subreddit}`);
+      });
+  }
+  if ((descr.includes("flirt")) && (cmd === comm[descr.indexOf("flirt")])) {
+    const randomIndex = randomInt(0, flirtyText.length);
+    msg.channel.send(flirtyText[randomIndex]);
   }
 });
 

@@ -20,27 +20,25 @@ export const Container = () =>{
   const [showmeme,setShowMeme]=useState(false);
 
   const ban=[
-    {category:"ban"},
-    {category:"unban"},
+    {category:"ban user"},
+    {category:"unban user"},
     {category:"kick user"}
   ]
 
 
   const music=[
-    {category:"play"},
-    {category:"playskip"},
-    {category:"playtop"},
-    {category:"skip"},
-    {category:"stop"},
-    {category:"autoplay"},
-    {category:"filter"},
-    {category:"pause"},
-    {category:"resume"},
-    {category:"volume"},
-    {category:"queue"},
-    {category:"playSong"},
-    {category:"addSong"},
-    {category:"disconnect"}
+    {category:"play a song"},
+    {category:"playskip a song"},
+    {category:"playtop a song"},
+    {category:"skip song"},
+    {category:"stop playing song"},
+    {category:"autoplay songs"},
+    {category:"use filter for song"},
+    {category:"pause song"},
+    {category:"resume song"},
+    {category:"set volume"},
+    {category:"show playlist"},
+    {category:"loop a song/playlist"}
   ];
 
   const meme=[
@@ -141,7 +139,7 @@ export const Container = () =>{
 
     <i class='fas fa-chevron-left back' style={{fontSize:"48px",color:"white",fontWeight:"bolder",background:"transparent"}} onClick={goToHome}></i>
     <h1 className="heading">
-      create-a-bot
+      Build-Your-BotX
     </h1>
     <form action="#" id="my_form" >
     <div className="welcome">
@@ -185,7 +183,6 @@ export const Container = () =>{
             <input class="" type="text" name="desc" placeholder="Enter the command"></input>
             
           </div>
-          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
         </div>
         })
       },
@@ -198,7 +195,6 @@ export const Container = () =>{
             <input class="" type="text" name="desc" placeholder="Enter the command"></input>
             
           </div>
-          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
         </div>
         })
       },
@@ -211,11 +207,10 @@ export const Container = () =>{
             <input class="" type="text" name="desc" placeholder="Enter the command"></input>
             
           </div>
-          {/* <button className="cls close black pointy" onClick={closeInput(index)}></button> */}
         </div>
         })
       },
-      <button class={styles.an2} onClick={saveFormData} href="#">
+      <button class={styles.an2} onClick={saveFormData} href="#" style={{"margin-bottom":"7vh"}}>
         <span></span>
         <span></span>
         <span></span>
