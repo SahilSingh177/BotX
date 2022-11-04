@@ -69,6 +69,7 @@ export const Banner = () => {
                   <img src={headerImg} alt="Header Img"/>
                 </div>}
             </TrackVisibility>
+              <p style={{translate:"13vw 10vh"}}>Made by Sahil, Nikhil & Ritesh</p>
           </Col>
         </Row>
       </Container>

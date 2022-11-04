@@ -2,8 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
-// import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import "./container.css";
 import styles from './button.module.css';
@@ -41,6 +39,7 @@ export const Container = () =>{
   const changeMusicState=(e)=>{
     e.preventDefault()
     setShowMusic(!showMusic);
+    
   }
 
   const changeBanCategories=(e)=>{

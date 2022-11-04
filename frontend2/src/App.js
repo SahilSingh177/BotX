@@ -3,7 +3,6 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavBar } from "./components/NavBar";
 import { Banner } from "./components/Banner";
-import { Footer } from "./components/Footer";
 import { Container } from "./components/Container";
 import { BotLinkSec } from "./components/BotLinkSection";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
@@ -21,12 +20,10 @@ function App() {
                 <NavBar />
                 <Banner />
                 <BotLinkSec />
-                <Footer />
               </>
             }
           ></Route>
-          <Route exact path="/botForm" element={<><Container />
-                <Footer /></>}></Route>
+          <Route exact path="/botForm" element={<><Container /></>}></Route>
         </Routes>
       </Router>
     </div>
