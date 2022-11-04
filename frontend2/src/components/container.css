@@ -229,5 +229,35 @@ input{
     font-family: 'Rubik Glitch', cursive;
     width: 100%;
   }
-  
+
+  .back{
+    position: fixed;
+    top: 1.5%;
+    right: 1.5%;
+  }
+
+  .back:hover{
+    cursor: pointer;
+  }
+
+  .finalLink{
+    padding-left: 3.5vw;
+    margin: 5vh auto;
+    width: 50vw;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    color: white;
+    word-wrap: break-word;
+    font-size: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .finalLink:hover{
+    color: white;
+  }
  
+  .buildABot{
+    font-size: 30px;
+  }
