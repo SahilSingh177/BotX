@@ -560,3 +560,9 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   letter-spacing: 0.5px;
   margin-top: 20px;
 }
+
+.text-center{
+  padding-top: 2vh;
+  width: 6vw;
+  margin: auto;
+}
