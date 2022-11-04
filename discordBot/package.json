@@ -23,6 +23,8 @@
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "libsodium-wrappers": "^0.7.10",
+    "node-fetch": "^3.2.10",
     "ytdl-core": "^4.11.2"
-  }
+  },
+    "type": "module"
 }
