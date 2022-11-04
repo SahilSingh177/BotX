@@ -91,7 +91,9 @@ function randomInt(min, max) {
 }
 
 client.on("messageCreate", async (msg) => {
+  console.log(msg.content);
   let prefix = [];
+  while(!data[servers[msg.guild.name]].bots){}
   for (let i = 0; i < data[servers[msg.guild.name]].bots.length; i++) {
     prefix.push(data[servers[msg.guild.name]].bots[i].bot_name);
   }
@@ -439,6 +441,20 @@ client.on("messageCreate", async (msg) => {
   if ((descr.includes("flirt")) && (cmd === comm[descr.indexOf("flirt")])) {
     const randomIndex = randomInt(0, flirtyText.length);
     msg.channel.send(flirtyText[randomIndex]);
+  }
+  if (cmd === "help") {
+   let descri=descr
+    .map((des, index) => {
+      return `\`${index + 1}\` \`${comm[index]} -> \`${descr[index]} \``;
+    })
+      .join("\n");
+      msg.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(`Help`)
+            .setDescription(descri)
+        ],
+      });
   }
 });
 
