@@ -1,12 +1,12 @@
-require("dotenv").config(); //initialize dotenv
-const {
+import {} from "dotenv/config"; //initialize dotenv
+import {
   Client,
   GatewayIntentBits,
   EmbedBuilder,
   messageLink,
-} = require("discord.js");
+} from "discord.js";
 //import discord.js
-const axios = require("axios");
+import axios from "axios";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -16,11 +16,28 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
   ],
 }); //create new client
-const prefix = "sahil";
-const { DisTube } = require("distube");
-const { SpotifyPlugin } = require("@distube/spotify");
-const { SoundCloudPlugin } = require("@distube/soundcloud");
-const { YtDlpPlugin } = require("@distube/yt-dlp");
+import { DisTube } from "distube";
+import { SpotifyPlugin } from "@distube/spotify";
+import { SoundCloudPlugin } from "@distube/soundcloud";
+import { YtDlpPlugin } from "@distube/yt-dlp";
+
+let flag = true;
+let servers = {};
+let data;
+const getData = async (e) => {
+  const getAllServers = await fetch("http://localhost:5000/get-bot", {
+    method: "get",
+  });
+  const resp = await getAllServers.json();
+  data = resp;
+  for (let i = 0; i < resp.length; i++) {
+    servers[String(resp[i].name)] = i;
+  }
+  flag = false;
+};
+while (flag == true) {
+  await getData();
+}
 
 client.emotes = {
   play: "▶️",
@@ -49,37 +66,6 @@ client.distube = new DisTube(client, {
   ],
 });
 
-const user_Command = {
-  "Bot trial server": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-  "Dark Domain": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-  "hope_'s server": {
-    "play songs": "bajao",
-    "ping yourself": "ping",
-    "kick user": "nikalo",
-    "ban user": "ban",
-    "unban user": "unban",
-  },
-};
-
-const commands = {
-  ping: ["Bot trial server"],
-  aww: ["Bot trial server"],
-  ugh: ["Bot trial server", "hope_'s server"],
-  "!meme": ["hope_'s server", "Dark Domain"],
-};
-
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -92,23 +78,39 @@ const subReddits = [
   "r/badUIbattles",
 ];
 
-const flirtyText=["Thinking a lot of things about you I can't say…but I could text.","You're my favorite veggie—a cute-cumber!","Can't stop thinking about your lips.","Feeling cuddly? ...",`When can I see you again? Pick a day that ends in y`,`Do you believe in love at first text? Because you can delete this one, and I can keep texting until you do.`]
+const flirtyText = [
+  "Thinking a lot of things about you I can't say…but I could text.",
+  "You're my favorite veggie—a cute-cumber!",
+  "Can't stop thinking about your lips.",
+  "Feeling cuddly? ...",
+  `When can I see you again? Pick a day that ends in y`,
+  `Do you believe in love at first text? Because you can delete this one, and I can keep texting until you do.`,
+];
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
 client.on("messageCreate", async (msg) => {
+  let prefix = [];
+  for (let i = 0; i < data[servers[msg.guild.name]].bots.length; i++) {
+    prefix.push(data[servers[msg.guild.name]].bots[i].bot_name);
+  }
+  const first = msg.content.split(" ")[0];
+
   if (msg.author.bot || !msg.guild) return;
-  if (!msg.content.startsWith(prefix)) {
+
+  if (!prefix.includes(first)) {
     return;
   }
+  let descr = data[servers[msg.guild.name]].bots[prefix.indexOf(first)].command;
+  let comm = data[servers[msg.guild.name]].bots[prefix.indexOf(first)].desc;
   msg.content = msg.content.split(" ").slice(1).join(" ");
-  let command = msg.content.split(" ")[0];
-  let args = msg.content.replace(command, "").trim();
-
+  let command_user = msg.content.split(" ")[0];
+  let args = msg.content.replace(command_user, "").trim();
+  
   if (
-    "kick user" in user_Command[msg.guild.name] &&
-    command === user_Command[msg.guild.name]["kick user"]
+    "kick user" in descr &&
+    command_user === comm[descr.indexOf("kick user")]
   ) {
     let userID = args.includes("<@!")
       ? args.replace("<@!", "").replace(">", "")
@@ -133,114 +135,88 @@ client.on("messageCreate", async (msg) => {
         });
     });
   }
-  switch (command) {
-    case "ban": {
-      let userID = args.includes("<@!")
-        ? args.replace("<@!", "").replace(">", "")
-        : args.includes("<@")
-        ? args.replace("<@", "").replace("<", "")
-        : "";
-      userID = userID.replace(">", "");
-      if (userID == "") {
-        msg.reply("Invalid user ID or mention.");
-        return;
-      }
-
-      msg.guild.members.fetch(userID).then((member) => {
-        member
-          .ban({ days: 7, reason: "They deserved it" })
-          .then(() => {
-            msg.channel.send("🔨 Banned <@" + userID + ">.");
-          })
-          .catch(() => {
-            console.error;
-            msg.reply("Could not ban the specified member.");
-          });
-      });
-      break;
+  if ("ban user" in descr && command_user === comm[descr.indexOf("ban user")]) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
     }
 
-    case "unban": {
-      let userID = args.includes("<@!")
-        ? args.replace("<@!", "").replace(">", "")
-        : args.includes("<@")
-        ? args.replace("<@", "").replace("<", "")
-        : "";
-      userID = userID.replace(">", "");
-      if (userID == "") {
-        msg.reply("Invalid user ID or mention.");
-        return;
-      }
-
-      msg.guild
-        .fetchBans()
-        .then((bans) => {
-          let member = bans.get(userID);
-          if (member == null) {
-            msg.reply("Cannot find a ban for the given user.");
-            return;
-          }
-
-          msg.guild.members
-            .unban(userID)
-            .then(() => {
-              msg.channel.send("Unbanned <@" + userID + ">.");
-            })
-            .catch(console.error);
+    msg.guild.members.fetch(userID).then((member) => {
+      member
+        .ban({ days: 7, reason: "They deserved it" })
+        .then(() => {
+          msg.channel.send("🔨 Banned <@" + userID + ">.");
         })
-        .catch(() => console.error);
-      break;
-    }
+        .catch(() => {
+          console.error;
+          msg.reply("Could not ban the specified member.");
+        });
+    });
   }
-  switch (msg.content) {
-    case "ping":
-      if (commands["ping"].includes(msg.guild.name)) {
-        msg.reply("Pong!");
-        break;
-      } else {
-        msg.reply("No such command exits bruh!");
-        break;
-      }
-    case "ugh":
-      msg.reply("Stfu!");
-      break;
 
-    case "aww":
-      msg.reply("Suka!");
-      break;
-    //our meme command below
+  if (
+    "unban user" in descr &&
+    command_user === comm[descr.indexOf("unban user")]
+  ) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
+    userID = userID.replace(">", "");
+    if (userID == "") {
+      msg.reply("Invalid user ID or mention.");
+      return;
+    }
 
-    case "meme":
-      if (commands["!meme"].includes(msg.guild.name)) {
-        msg.channel.send("Here's your meme!"); //Replies to user command
+    msg.guild
+      .fetchBans()
+      .then((bans) => {
+        let member = bans.get(userID);
+        if (member == null) {
+          msg.reply("Cannot find a ban for the given user.");
+          return;
+        }
 
-        const randomIndex = randomInt(0, subReddits.length);
-        axios
-          .get(`https://reddit.com/${subReddits[randomIndex]}/.json`)
-          .then((resp) => {
-            const {
-              title,
-              url,
-              subreddit_name_prefixed: subreddit,
-            } = getRandomPost(resp.data.data.children);
-            msg.channel.send(`${title}\n${url}\n from ${subreddit}`);
-          });
-        break;
-      } else {
-        msg.reply("Naah Hard paas!");
-        break;
-      }
-    case "flirt":
-        const randomIndex = randomInt(0, flirtyText.length);
-        msg.channel.send(flirtyText[randomIndex]);
-        break;
-      
+        msg.guild.members
+          .unban(userID)
+          .then(() => {
+            msg.channel.send("Unbanned <@" + userID + ">.");
+          })
+          .catch(console.error);
+      })
+      .catch(() => console.error);
+  }
+  if ("meme" in descr && command_user === comm[descr.indexOf("meme")]) {
+    msg.channel.send("Here's your meme!"); //Replies to user command
+
+    const randomIndex = randomInt(0, subReddits.length);
+    axios
+      .get(`https://reddit.com/${subReddits[randomIndex]}/.json`)
+      .then((resp) => {
+        const {
+          title,
+          url,
+          subreddit_name_prefixed: subreddit,
+        } = getRandomPost(resp.data.data.children);
+        msg.channel.send(`${title}\n${url}\n from ${subreddit}`);
+      });
+  }
+  if ("flirt" in descr && command_user === comm[descr.indexOf("flirt")]) {
+    const randomIndex = randomInt(0, flirtyText.length);
+    msg.channel.send(flirtyText[randomIndex]);
   }
   args = msg.content.trim().split(/ +/g);
   let cmd = args.shift()?.toLowerCase();
   let queue = client.distube.getQueue(msg);
-
-  if (cmd === "play") {
+  
+  if ((descr.includes("play a song")) && (cmd === comm[descr.indexOf("play a song")])) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -255,7 +231,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (cmd === "playskip") {
+  if (
+    "playskip a song" in descr &&
+    command_user === cmd[descr.indexOf("playskip a song")]
+  ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -271,7 +250,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (cmd === "playtop") {
+  if (
+    "playtop a song" in descr &&
+    command_user === cmd[descr.indexOf("playtop a song")]
+  ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -288,7 +270,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (cmd === "skip") {
+  if (
+    "skip song" in descr &&
+    command_user === cmd[descr.indexOf("skip song")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -304,7 +289,10 @@ client.on("messageCreate", async (msg) => {
     }
   }
 
-  if (cmd === "stop") {
+  if (
+    "stop playing song" in descr &&
+    command_user === cmd[descr.indexOf("stop playing song")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -316,7 +304,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (cmd === "autoplay") {
+  if (
+    "autoplay songs" in descr &&
+    command_user === cmd[descr.indexOf("autoplay songs")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -327,7 +318,10 @@ client.on("messageCreate", async (msg) => {
       msg.reply(`Autoplay: \`${autoplay ? "On" : "Off"}\``);
     }
   }
-  if (cmd === "filter") {
+  if (
+    "use filter for song" in descr &&
+    command_user === cmd[descr.indexOf("use filter for song")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -339,12 +333,16 @@ client.on("messageCreate", async (msg) => {
         if (queue.filters.has(args[0])) queue.filters.remove(args[0]);
         else queue.filters.add(args[0]);
       } else if (args[0]) {
-      msg.channel.send(
-        `Current Queue Filter: \`${queue.filters.names.join(", ") || "Off"}\``
-      );}
+        msg.channel.send(
+          `Current Queue Filter: \`${queue.filters.names.join(", ") || "Off"}\``
+        );
+      }
     }
   }
-  if (cmd === "pause") {
+  if (
+    "pause song" in descr &&
+    command_user === cmd[descr.indexOf("pause song")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -357,7 +355,10 @@ client.on("messageCreate", async (msg) => {
       msg.reply(`Song paused.`);
     }
   }
-  if (cmd === "resume") {
+  if (
+    "resume song" in descr &&
+    command_user === cmd[descr.indexOf("resume song")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -370,7 +371,10 @@ client.on("messageCreate", async (msg) => {
       msg.reply(`Song Resumed.`);
     }
   }
-  if (cmd === "volume") {
+  if (
+    "set volume" in descr &&
+    command_user === cmd[descr.indexOf("set volume")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     let volume = Number(args[0]);
     if (!voiceChannel) {
@@ -384,7 +388,10 @@ client.on("messageCreate", async (msg) => {
       msg.reply(`Volume changed to \`${queue.volume}%\` `);
     }
   }
-  if (cmd === "queue") {
+  if (
+    "show playlist" in descr &&
+    command_user === cmd[descr.indexOf("show playlist")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -414,7 +421,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (cmd === "loop") {
+  if (
+    "loop a song or a playlist" in descr &&
+    command_user === cmd[descr.indexOf("loop a song or a playlist")]
+  ) {
     let voiceChannel = msg.member.voice.channel;
     let loopmode = args[0];
     let mods = ["song", "queue", "off"];
