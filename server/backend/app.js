@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const getCommands=require('./routes/bot-commands');
+const getCommands=require('./routes/getCommands');
 const cors = require('cors');
 
 const corsOptions = {
@@ -21,7 +21,7 @@ app.use(cors(corsOptions));
 
 
 const MONGODB_URI =
-  `mongodb+srv://nikhil03:hellskitchen03@cluster0.noxzw.mongodb.net/discordServersretryWrites=true&w=majority`;
+  `mongodb+srv://nikhil03:hellskitchen03@cluster0.noxzw.mongodb.net/shop?retryWrites=true&w=majority`;
 
 
 
@@ -38,14 +38,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //form-urlencoded
 app.use(getCommands);
 
-const port = process.env.PORT || 5000;
-
 
 mongoose
   .connect(MONGODB_URI)
   .then(result => {
     console.log('connected')
-    app.listen(port);
+    app.listen(5000);
   })
   .catch(err => {
     console.log(err);

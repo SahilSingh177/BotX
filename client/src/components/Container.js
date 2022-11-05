@@ -61,6 +61,7 @@ export const Container = () =>{
   const changeMusicState=(e)=>{
     e.preventDefault()
     setShowMusic(!showMusic);
+    
   }
 
   const changeBanCategories=(e)=>{
@@ -81,11 +82,8 @@ export const Container = () =>{
   const viewResult=async ()=>{
       showResults(false);
       setLoading(true);
-      setTimeout(()=>{
-        setLoading(false);
-        showResults(true);
-      }
-      ,1500);
+      setTimeout(()=>setLoading(false),1500);
+      showResults(true);
   }
  
 
@@ -124,7 +122,7 @@ export const Container = () =>{
       body: JSON.stringify(data) 
     });
 
-    if ("errors" in response)console.error(response)
+  
     console.log("success")
 
     const getAllServers= await fetch("http://localhost:5000/get-bot",{
