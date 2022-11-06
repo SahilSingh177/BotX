@@ -1,11 +1,13 @@
+import express from "express";
+const port = process.env.PORT || 5000;
 import {} from "dotenv/config"; //initialize dotenv
 import {
   Client,
   GatewayIntentBits,
   EmbedBuilder,
   messageLink,
+  MessageReaction,
 } from "discord.js";
-//import discord.js
 import axios from "axios";
 const client = new Client({
   intents: [
@@ -20,14 +22,17 @@ import { DisTube } from "distube";
 import { SpotifyPlugin } from "@distube/spotify";
 import { SoundCloudPlugin } from "@distube/soundcloud";
 import { YtDlpPlugin } from "@distube/yt-dlp";
-
+const app = express();
 let flag = true;
 let servers = {};
 let data;
 const getData = async (e) => {
-  const getAllServers = await fetch("http://localhost:5000/get-bot", {
-    method: "get",
-  });
+  const getAllServers = await fetch(
+    "https://botx-discord.herokuapp.com/get-bot",
+    {
+      method: "get",
+    }
+  );
   const resp = await getAllServers.json();
   data = resp;
   for (let i = 0; i < resp.length; i++) {
@@ -86,6 +91,24 @@ const flirtyText = [
   `When can I see you again? Pick a day that ends in y`,
   `Do you believe in love at first text? Because you can delete this one, and I can keep texting until you do.`,
 ];
+
+const filtersList = [
+  "3d",
+  "bassboost",
+  "echo",
+  "karaoke",
+  "nightcore",
+  "vaporwave",
+  "flanger",
+  "gate",
+  "haas",
+  "reverse",
+  "surround",
+  "mcompand",
+  "phaser",
+  "tremolo",
+  "earwax",
+];
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -93,18 +116,40 @@ function randomInt(min, max) {
 client.on("messageCreate", async (msg) => {
   console.log(msg.content);
   await getData();
+  if (!data[servers[msg.guild.name]]) {
+    return;
+  }
   let prefix = [];
-  while(!data[servers[msg.guild.name]].bots){}
+  while (!data[servers[msg.guild.name]].bots) {}
+
   for (let i = 0; i < data[servers[msg.guild.name]].bots.length; i++) {
     prefix.push(data[servers[msg.guild.name]].bots[i].bot_name);
   }
+  console.log(data[data.length - 1]);
+
   const first = msg.content.split(" ")[0];
 
   if (msg.author.bot || !msg.guild) return;
 
+  if (msg.content.toLowerCase() === "showbots") {
+    let botList = prefix
+      .map((pre, index) => {
+        return `\`${index + 1}.)\` \`${prefix[index]}\``;
+      })
+      .join("\n");
+    msg.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(`List of Bots in your Server`)
+          .setDescription(botList),
+      ],
+    });
+  }
+
   if (!prefix.includes(first)) {
     return;
   }
+  console.log("connected");
   let descr = data[servers[msg.guild.name]].bots[prefix.indexOf(first)].command;
   let comm = data[servers[msg.guild.name]].bots[prefix.indexOf(first)].desc;
   msg.content = msg.content.split(" ").slice(1).join(" ");
@@ -116,7 +161,7 @@ client.on("messageCreate", async (msg) => {
 
   if (
     descr.includes("play a song") &&
-    cmd === comm[descr.indexOf("play a song")]
+    cmd.toLowerCase() === comm[descr.indexOf("play a song")].toLowerCase()
   ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
@@ -134,7 +179,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("playskip a song") &&
-    cmd === comm[descr.indexOf("playskip a song")]
+    cmd.toLowerCase() === comm[descr.indexOf("playskip a song")].toLowerCase()
   ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
@@ -153,7 +198,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("playtop a song") &&
-    cmd === comm[descr.indexOf("playtop a song")]
+    cmd.toLowerCase() === comm[descr.indexOf("playtop a song")].toLowerCase()
   ) {
     let song = args.join(" ");
     let voiceChannel = msg.member.voice.channel;
@@ -171,7 +216,10 @@ client.on("messageCreate", async (msg) => {
       });
     }
   }
-  if (descr.includes("skip song") && cmd === comm[descr.indexOf("skip song")]) {
+  if (
+    descr.includes("skip song") &&
+    cmd.toLowerCase() === comm[descr.indexOf("skip song")].toLowerCase()
+  ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
@@ -189,7 +237,7 @@ client.on("messageCreate", async (msg) => {
 
   if (
     descr.includes("stop playing song") &&
-    cmd === comm[descr.indexOf("stop playing song")]
+    cmd.toLowerCase() === comm[descr.indexOf("stop playing song")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -204,7 +252,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("autoplay songs") &&
-    cmd === comm[descr.indexOf("autoplay songs")]
+    cmd.toLowerCase() === comm[descr.indexOf("autoplay songs")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -218,28 +266,32 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("use filter for song") &&
-    cmd === comm[descr.indexOf("use filter for song")]
+    cmd.toLowerCase() ===
+      comm[descr.indexOf("use filter for song")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
       return msg.reply(`**👀 Please join a voice channel.**`);
     } else if (!queue) {
       return msg.reply(`**Nothing to play.**`);
-    } else{
+    } else {
       if (args[0] === "off" && queue.filters?.length) queue.setFilter(false);
       else if (Object.keys(client.distube.filters).includes(args[0])) {
         if (queue.filters.has(args[0])) queue.filters.remove(args[0]);
         else queue.filters.add(args[0]);
       } else if (args[0]) {
-        msg.channel.send(
-          `Current Queue Filter: \`${queue.filters.names.join(", ") || "Off"}\``
+        return msg.channel.send(
+          `${client.emotes.error} | Not a valid filter \n Type ${first} showfilters to see the list of available filters.`
         );
       }
+      return msg.channel.send(
+        `Current Queue Filter: \`${queue.filters.names.join(", ") || "Off"}\``
+      );
     }
   }
   if (
     descr.includes("pause song") &&
-    cmd === comm[descr.indexOf("pause song")]
+    cmd.toLowerCase() === comm[descr.indexOf("pause song")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -255,7 +307,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("resume song") &&
-    cmd === comm[descr.indexOf("resume song")]
+    cmd.toLowerCase() === comm[descr.indexOf("resume song")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -271,7 +323,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("set volume") &&
-    cmd === comm[descr.indexOf("set volume")]
+    cmd.toLowerCase() === comm[descr.indexOf("set volume")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     let volume = Number(args[0]);
@@ -288,7 +340,7 @@ client.on("messageCreate", async (msg) => {
   }
   if (
     descr.includes("show playlist") &&
-    cmd === comm[descr.indexOf("show playlist")]
+    cmd.toLowerCase() === comm[descr.indexOf("show playlist")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     if (!voiceChannel) {
@@ -320,8 +372,9 @@ client.on("messageCreate", async (msg) => {
     }
   }
   if (
-    descr.includes("loop a song or a playlist") &&
-    cmd === comm[descr.indexOf("loop a song or a playlist")]
+    descr.includes("loop a song/playlist") &&
+    cmd.toLowerCase() ===
+      comm[descr.indexOf("loop a song/playlist")].toLowerCase()
   ) {
     let voiceChannel = msg.member.voice.channel;
     let loopmode = args[0];
@@ -346,8 +399,11 @@ client.on("messageCreate", async (msg) => {
       }
     }
   }
-  args=args[0]
-  if ((descr.includes("kick user")) && (cmd === comm[descr.indexOf("kick user")])) {
+  args = args[0];
+  if (
+    descr.includes("kick user") &&
+    cmd.toLowerCase() === comm[descr.indexOf("kick user")].toLowerCase()
+  ) {
     let userID = args.includes("<@!")
       ? args.replace("<@!", "").replace(">", "")
       : args.includes("<@")
@@ -371,9 +427,16 @@ client.on("messageCreate", async (msg) => {
         });
     });
   }
-  
-  if ((descr.includes("ban user")) && (cmd === comm[descr.indexOf("ban user")])) {
-    let userID = args.includes("<@!")? args.replace("<@!", "").replace(">", ""): args.includes("<@")? args.replace("<@", "").replace("<", ""): "";
+
+  if (
+    descr.includes("ban user") &&
+    cmd.toLowerCase() === comm[descr.indexOf("ban user")].toLowerCase()
+  ) {
+    let userID = args.includes("<@!")
+      ? args.replace("<@!", "").replace(">", "")
+      : args.includes("<@")
+      ? args.replace("<@", "").replace("<", "")
+      : "";
     console.log(userID);
     userID = userID.replace(">", "");
     if (userID == "") {
@@ -394,7 +457,10 @@ client.on("messageCreate", async (msg) => {
     });
   }
 
-  if ((descr.includes("unban user")) && (cmd === comm[descr.indexOf("unban user")])) {
+  if (
+    descr.includes("unban user") &&
+    cmd.toLowerCase() === comm[descr.indexOf("unban user")].toLowerCase()
+  ) {
     let userID = args.includes("<@!")
       ? args.replace("<@!", "").replace(">", "")
       : args.includes("<@")
@@ -406,8 +472,8 @@ client.on("messageCreate", async (msg) => {
       return;
     }
 
-    msg.guild
-      .bans.fetch ()
+    msg.guild.bans
+      .fetch()
       .then((bans) => {
         let member = bans.get(userID);
         if (member == null) {
@@ -424,7 +490,10 @@ client.on("messageCreate", async (msg) => {
       })
       .catch(() => console.error);
   }
-  if ((descr.includes("meme")) && (cmd === comm[descr.indexOf("meme")])) {
+  if (
+    descr.includes("meme") &&
+    cmd.toLowerCase() === comm[descr.indexOf("meme")].toLowerCase()
+  ) {
     msg.channel.send("Here's your meme!"); //Replies to user command
 
     const randomIndex = randomInt(0, subReddits.length);
@@ -439,23 +508,50 @@ client.on("messageCreate", async (msg) => {
         msg.channel.send(`${title}\n${url}\n from ${subreddit}`);
       });
   }
-  if ((descr.includes("flirt")) && (cmd === comm[descr.indexOf("flirt")])) {
+  if (
+    descr.includes("flirt") &&
+    cmd.toLowerCase() === comm[descr.indexOf("flirt")].toLowerCase()
+  ) {
     const randomIndex = randomInt(0, flirtyText.length);
     msg.channel.send(flirtyText[randomIndex]);
   }
-  if (cmd === "help") {
-   let descri=descr
-    .map((des, index) => {
-      return `\`${index + 1}\` \`${comm[index]} -> \`${descr[index]} \``;
-    })
+  if (cmd.toLowerCase() === "help") {
+    let descri = descr
+      .map((des, index) => {
+        return `\`${index + 1}\` \`${comm[index]} -> \`${descr[index]} \``;
+      })
       .join("\n");
-      msg.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle(`Help`)
-            .setDescription(descri)
-        ],
-      });
+    msg.reply({
+      embeds: [new EmbedBuilder().setTitle(`Help`).setDescription(descri)],
+    });
+  }
+  if (
+    descr.includes("conduct poll") &&
+    cmd.toLowerCase() === comm[descr.indexOf("conduct poll")].toLowerCase()
+  ) {
+    const content = msg.content;
+    const eachLine = content.split("\n");
+    for (const line of eachLine) {
+      if (line.includes("=")) {
+        const split = line.split("=");
+        const emoji = split[0].trim();
+        msg.react(emoji);
+      }
+    }
+  }
+  if (msg.content.toLowerCase() === "showfilters") {
+    let filterlist = filtersList
+      .map((pre, index) => {
+        return `\`${index + 1}.)\` \`${filtersList[index]}\``;
+      })
+      .join("\n");
+    msg.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(`List of Available filters`)
+          .setDescription(filterlist),
+      ],
+    });
   }
 });
 
@@ -497,3 +593,5 @@ function getRandomPost(posts) {
 }
 
 client.login(process.env.CLIENT_TOKEN);
+
+app.listen(port);
