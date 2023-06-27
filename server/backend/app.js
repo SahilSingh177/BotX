@@ -19,23 +19,14 @@ app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 
-
 const MONGODB_URI =
-  `mongodb+srv://nikhil03:hellskitchen03@cluster0.noxzw.mongodb.net/shop?retryWrites=true&w=majority`;
+  `mongodb+srv://nikhil03:hellskitchen03@cluster0.v5kssag.mongodb.net/botx?retryWrites=true&w=majority`;
 
-
-
-
-// app.use(cors())
-
-// for parsing application/json
 app.use(express.urlencoded({ extended: true }));
 
 app.use(bodyParser.json()); 
 
-// for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended: true })); 
-//form-urlencoded
 app.use(getCommands);
 
 

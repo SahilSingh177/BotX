@@ -82,7 +82,6 @@ export const Container = () =>{
   const viewResult=async ()=>{
       showResults(false);
       setLoading(true);
-      setTimeout(()=>setLoading(false),1500);
       showResults(true);
   }
  
@@ -224,7 +223,7 @@ export const Container = () =>{
     }
     {
       results && <div>
-        <a href="https://discord.com/api/oauth2/authorize?client_id=1036664574851698720&permissions=4398046511095&scope=bot" className="finalLink">Add Bot</a>
+        <a href="https://discord.com/api/oauth2/authorize?client_id=1036664574851698720&permissions=8&scope=bot" className="finalLink">Add Bot</a>
       </div>
     }
     </>

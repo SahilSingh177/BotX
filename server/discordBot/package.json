@@ -20,6 +20,7 @@
     "discord.js-poll": "^1.2.1",
     "distube": "^4.0.4",
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "libsodium-wrappers": "^0.7.10",
